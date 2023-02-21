@@ -1,0 +1,104 @@
+<!doctype html>
+<html>
+  <head>
+    <title>tempchat</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      body {
+        font-family: Helvetica, Arial, sans-serif;
+        background: linear-gradient(90deg, #4f74c1, #d43f8d);
+        color: #5d5d5d;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+      }
+      .window {
+        background-color: rgba(255, 255, 255, 0.9);
+        width: 90%;
+        max-width: 600px;
+        height: 90%;
+        max-height: 600px;
+        display: flex;
+        flex-direction: column;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.5);
+      }
+      form {
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+      }
+      form input {
+        background-color: rgba(255, 255, 255, 0.1);
+        border: none;
+        padding: 10px;
+        width: 100%;
+        color: #fff;
+        margin-right: 10px;
+      }
+      form button {
+        width: 20%;
+        background-color: #fff;
+        border: none;
+        color: #4f74c1;
+        padding: 10px;
+        cursor: pointer;
+      }
+      #messages {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow-y: auto;
+        flex-grow: 1;
+      }
+      #messages li {
+        padding: 10px;
+        background-color: rgba(255, 255, 255, .1);
+        margin-bottom: 10px;
+        border-radius: 5px;
+      }
+      #messages li:nth-child(odd) {
+        background-color: rgba(255, 255, 255, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="window">
+      <ul id="messages"></ul>
+      <form id="chat-form">
+        <input id="chat-input" autocomplete="off" placeholder="Type your message here" /><button>Send</button>
+      </form>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+      const socket = io();
+      const form = document.getElementById('chat-form');
+      const input = document.getElementById('chat-input');
+      const messages = document.getElementById('messages');
+      
+      form.addEventListener('submit', (e) => {
+        e.preventDefault();
+        if (input.value) {
+          socket.emit('chat message', input.value);
+          input.value = '';
+        }
+      });
+      
+      socket.on('chat message', (msg) => {
+        const li = document.createElement('li');
+        li.textContent = msg;
+        messages.appendChild(li);
+      });
+    </script>
+  </body>
+</html>
